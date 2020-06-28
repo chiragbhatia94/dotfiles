@@ -1,0 +1,20 @@
+[user]
+	name = Chirag Bhatia
+	email = chiragbhatia94@gmail.com
+[alias]
+	hist = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --all
+	uncommit = reset --soft HEAD~1
+	apply-gitignore = !git ls-files -ci --exclude-standard -z | xargs -0 git rm --cached
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[core]
+	excludesfile = ~/.gitignore
+
+###
+### Include local overrides
+###
+[include]
+	path = .gitconfig.local
