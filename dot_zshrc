@@ -1,0 +1,57 @@
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
+# source antidote
+source $(brew --prefix)/opt/antidote/share/antidote/antidote.zsh
+zstyle ':antidote:bundle' use-friendly-names 'yes'
+
+# # Load antigen
+# source $(brew --prefix)/share/antigen/antigen.zsh
+
+# # Load antigen configuration
+# antigen init ~/.antigenrc
+
+# autoload -Uz compinit
+# compinit
+# On slow systems, checking the cached .zcompdump file to see if it must be 
+# regenerated adds a noticable delay to zsh startup.  This little hack restricts 
+# it to once a day.  It should be pasted into your own completion file.
+#
+# The globbing is a little complicated here:
+# - '#q' is an explicit glob qualifier that makes globbing work within zsh's [[ ]] construct.
+# - 'N' makes the glob pattern evaluate to nothing when it doesn't match (rather than throw a globbing error)
+# - '.' matches "regular files"
+# - 'mh+24' matches files (or directories or whatever) that are older than 24 hours.
+autoload -Uz compinit
+for dump in ~/.zcompdump(N.mh+24); do
+  compinit
+done
+compinit -C
+
+# initialize plugins statically with ${ZDOTDIR:-~}/.zsh_plugins.txt
+antidote load
+
+autoload -Uz promptinit && promptinit && prompt powerlevel10k
+
+source <(kubectl completion zsh)
+
+. $(brew --prefix asdf)/libexec/asdf.sh
+. ~/.asdf/plugins/java/set-java-home.zsh
+. ~/.asdf/plugins/jmeter/set-jmeter-home.zsh
+
+export PATH="/opt/homebrew/opt/curl/bin:/Applications/IntelliJ IDEA.app/Contents/MacOS:$HOME/Tools:$PATH"
+
+# For compilers to find curl
+export LDFLAGS="-L/opt/homebrew/opt/curl/lib"
+export CPPFLAGS="-I/opt/homebrew/opt/curl/include"
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+eval $(thefuck --alias)
+
+alias brew86="arch -x86_64 /usr/local/homebrew/bin/brew"
